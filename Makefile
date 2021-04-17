@@ -1,4 +1,3 @@
-#
 # 'make depend'      uses makedepend to automatically generate dependencies 
 #                    (dependencies are added to end of Makefile)
 # 'make'             build executable file 'mycc'
@@ -14,7 +13,7 @@ CFLAGS := -Wall -g
 
 # define any directories containing header files other than /usr/include
 #
-INC := ./headers 
+INC := ./headers ./sources
 INCLUDES := $(foreach d, $(INC), -I$d)
 
 # define library paths in addition to /usr/lib

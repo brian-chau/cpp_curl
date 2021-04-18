@@ -4,7 +4,7 @@
 # 'make clean'       removes all .o files
 # 'make clean all'   removes all .o files and executable file
 
-# define the C compiler to use
+# define the C++ compiler to use
 CC := g++
 RM := rm -rf
 
@@ -29,10 +29,10 @@ LDFLAGS := -shared
 #   option, something like (this will link in libmylib.so and libm.so:
 LIBS := -lcurl -lm
 
-# define the C source files
+# define the C++ source files
 SRCS := sources/main.cpp
 
-# define the C object files 
+# define the C++ object files 
 #
 # This uses Suffix Replacement within a macro:
 #   $(name:string1=string2)
@@ -40,7 +40,7 @@ SRCS := sources/main.cpp
 # Below we are replacing the suffix .c of all words in the macro SRCS
 # with the .o suffix
 #
-OBJS := $(SRCS:.c=.o)
+OBJS := $(SRCS:.cpp=.o)
 
 # define the executable file 
 MAIN := mycc
@@ -61,19 +61,19 @@ $(MAIN): $(OBJS)
 	$(CC) $(CFLAGS) $(INCLUDES) -o $(MAIN) $(OBJS) $(LFLAGS) $(LIBS) $(LDFLAGS)
 #	$(CC) $(CFLAGS) $(INCLUDES) -o $(TARGET_LIB) $(OBJS) $(LFLAGS) $(LIBS) $(LDFLAGS)
 
-# this is a suffix replacement rule for building .o's from .c's
+# this is a suffix replacement rule for building .o's from .cpp's
 # it uses automatic variables $<: the name of the prerequisite of
 # the rule(a .c file) and $@: the name of the target of the rule (a .o file) 
 # (see the gnu make manual section about automatic variables)
-.c.o:
+.cpp.o:
 	$(CC) $(CFLAGS) $(INCLUDES) -c $<  -o $@
 
 clean:
-	$(RM) *.o *~
+	$(RM) sources/*.o *~
 	$(RM) $(MAIN).dSYM
 
 clean_all:
-	$(RM) *.o *~ $(MAIN)
+	$(RM) sources/*.o *~ $(MAIN)
 	$(RM) $(MAIN).dSYM
 
 depend: $(SRCS)

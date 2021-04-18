@@ -44,8 +44,6 @@ OBJS := $(SRCS:.cpp=.o)
 
 # define the executable file 
 MAIN := mycc
-TARGET_LIB := libtarget.so
-
 #
 # The following part of the makefile is generic; it can be used to 
 # build any executable just by changing the definitions above and by
@@ -58,8 +56,7 @@ all:    $(MAIN)
 	@echo  Simple compiler named mycc has been compiled 
 
 $(MAIN): $(OBJS) 
-	$(CC) $(CFLAGS) $(INCLUDES) -o $(MAIN) $(OBJS) $(LFLAGS) $(LIBS) $(LDFLAGS)
-#	$(CC) $(CFLAGS) $(INCLUDES) -o $(TARGET_LIB) $(OBJS) $(LFLAGS) $(LIBS) $(LDFLAGS)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $(MAIN) $(OBJS) $(LFLAGS) $(LIBS)
 
 # this is a suffix replacement rule for building .o's from .cpp's
 # it uses automatic variables $<: the name of the prerequisite of

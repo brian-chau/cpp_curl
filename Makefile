@@ -63,7 +63,7 @@ $(MAIN): $(OBJS)
 
 # this is a suffix replacement rule for building .o's from .cpp's
 # it uses automatic variables $<: the name of the prerequisite of
-# the rule(a .c file) and $@: the name of the target of the rule (a .o file) 
+# the rule(a .cpp file) and $@: the name of the target of the rule (a .o file) 
 # (see the gnu make manual section about automatic variables)
 .cpp.o:
 	$(CC) $(CFLAGS) $(INCLUDES) -c $<  -o $@

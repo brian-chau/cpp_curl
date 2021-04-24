@@ -51,9 +51,9 @@ int http_gets::get_posix_way()
     char request_template[] = "GET / HTTP/1.1\r\nHost: %s\r\nConnection: close\r\n\r\n";
     struct protoent *protoent;
     in_addr_t in_addr;
-    int request_len;
-    int socket_file_descriptor;
-    ssize_t nbytes_total, nbytes_last;
+    int request_len(0);
+    int socket_file_descriptor(0);
+    ssize_t nbytes_total(0), nbytes_last(0);
     struct hostent *hostent;
     struct sockaddr_in sockaddr_in;
 

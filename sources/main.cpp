@@ -1,17 +1,27 @@
+#include <utility>
 #include <iostream>
-#include <curl/curl.h>
- 
-int main( void )
+#include <fstream>
+
+#include "http_gets.h" 
+int main( int argc, char** argv )
 {
-    CURL *curl;
-    CURLcode res;
- 
-    curl = curl_easy_init();
-    if(curl) {
-        curl_easy_setopt(curl, CURLOPT_URL, "http://example.com");
-        res = curl_easy_perform(curl);
-        curl_easy_cleanup(curl);
-    }
-    
+    std::string hostname("");
+    unsigned int server_port(0);
+    if (argc > 1)
+        hostname = argv[1];
+    if (argc > 2)
+        server_port = strtoul(argv[2], NULL, 10);
+    else
+        server_port = 80;
+
+    std::unique_ptr<http_gets> curl = std::unique_ptr<http_gets>(new http_gets(hostname,server_port));
+    curl->get_posix_way();
+    //curl->get_curl_way();
+
+    std::fstream fs;
+    fs.open ("test.txt", std::fstream::in | std::fstream::out | std::fstream::app);
+    fs << curl->m_result;
+    fs.close();
+
     return 0;
 }

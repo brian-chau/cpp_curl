@@ -9,7 +9,7 @@ CC := g++
 RM := rm -rf
 
 # define any compile-time flags
-CFLAGS := -Wall -g -std=c++0x
+CFLAGS := -Wall -Werror -g -std=c++0x
 
 # define any directories containing header files other than /usr/include
 #
@@ -30,7 +30,8 @@ LDFLAGS := -shared
 LIBS := -lcurl -lm
 
 # define the C++ source files
-SRCS := sources/main.cpp
+SRC_DIR := sources
+SRCS := $(SRC_DIR)/main.cpp $(SRC_DIR)/http_gets.cpp
 
 # define the C++ object files 
 #

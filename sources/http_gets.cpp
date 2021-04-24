@@ -3,23 +3,18 @@
 #include <assert.h>
 #include <netdb.h> /* getprotobyname */
 #include <netinet/in.h>
-#include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <curl/curl.h>
 #include "http_gets.h"
 #include <iostream>
 #include <regex>
-
-http_gets::http_gets(std::string hostname)
-{
-    m_hostname = hostname;
-    m_port     = 80;
-    m_result   = "";
-}
+#include <string>
+#include <stdexcept>
+#include <iostream>
+#include <iomanip>
+#include <stdio.h>
 
 http_gets::http_gets(std::string hostname, unsigned int port)
 {
@@ -31,6 +26,19 @@ http_gets::http_gets(std::string hostname, unsigned int port)
 http_gets::~http_gets()
 {
 
+}
+
+template<typename... Args>
+std::string fmt_str(std::string fmt, Args... args)
+{
+    size_t bufferSize = 1000;
+    char *buffer = new char[bufferSize];
+    int n = sprintf(buffer, fmt.c_str(), args...);
+    assert (n >= 0 and n < (int) bufferSize - 1  && "check fmt_str output");
+
+    std::string fmtStr (buffer);
+    delete[] buffer;
+    return fmtStr;
 }
 
 int http_gets::get_posix_way()
@@ -51,33 +59,33 @@ int http_gets::get_posix_way()
 
     request_len = snprintf(request, MAX_REQUEST_LEN, request_template, m_hostname.c_str());
     if (request_len >= MAX_REQUEST_LEN) {
-        fprintf(stderr, "request length large: %d\n", request_len);
-        exit(EXIT_FAILURE);
+        std::cerr << fmt_str("request length large: %d", request_len) << std::endl;
+        return EXIT_FAILURE;
     }
 
     /* Build the socket. */
     protoent = getprotobyname("tcp");
     if (NULL == protoent) {
         perror("getprotobyname");
-        exit(EXIT_FAILURE);
+        return EXIT_FAILURE;
     }
 
     socket_file_descriptor = socket(AF_INET, SOCK_STREAM, protoent->p_proto);
     if (-1 == socket_file_descriptor) {
         perror("socket");
-        exit(EXIT_FAILURE);
+        return EXIT_FAILURE;
     }
 
     /* Build the address. */
     hostent = gethostbyname(m_hostname.c_str());
     if (NULL == hostent){
-        fprintf(stderr, "error: gethostbyname(\"%s\")\n", m_hostname.c_str());
-        exit(EXIT_FAILURE);
+        std::cerr << fmt_str("error: gethostbyname(%s)", m_hostname.c_str()) << std::endl;
+        return EXIT_FAILURE;
     }
     in_addr = inet_addr(inet_ntoa(*(struct in_addr*)*(hostent->h_addr_list)));
     if (in_addr == (in_addr_t)-1) {
-        fprintf(stderr, "error: inet_addr(\"%s\")\n", *(hostent->h_addr_list));
-        exit(EXIT_FAILURE);
+        std::cerr << fmt_str("error: inetaddr(%s)", *(hostent->h_addr_list)) << std::endl;
+        return EXIT_FAILURE;
     }
     sockaddr_in.sin_addr.s_addr = in_addr;
     sockaddr_in.sin_family = AF_INET;
@@ -86,7 +94,7 @@ int http_gets::get_posix_way()
     /* Actually connect. */
     if (connect(socket_file_descriptor, (struct sockaddr*)&sockaddr_in, sizeof(sockaddr_in)) == -1) {
         perror("connect");
-        return (EXIT_FAILURE);
+        return EXIT_FAILURE;
     }
 
     /* Send HTTP request. */
@@ -95,23 +103,23 @@ int http_gets::get_posix_way()
         nbytes_last = write(socket_file_descriptor, request + nbytes_total, request_len - nbytes_total);
         if (-1 == nbytes_last) {
             perror("write");
-            return (EXIT_FAILURE);
+            return EXIT_FAILURE;
         }
         nbytes_total += nbytes_last;
     }
 
     /* Read the response. */
-    fprintf(stderr, "debug: before first read\n");
+    std::cerr << "debug: before first read" << std::endl;
     while ((nbytes_total = read(socket_file_descriptor, buffer, BUFSIZ)) > 0) {
-        fprintf(stderr, "debug: after a read\n");
+        std::cerr << "debug: after a read" << std::endl;
         m_result += buffer;
         memset(&buffer, 0, BUFSIZ);
     }
 
-    fprintf(stderr, "debug: after last read\n");
+    std::cerr << "debug: after last read" << std::endl;
     if (-1 == nbytes_total) {
         perror("read");
-        return (EXIT_FAILURE);
+        return EXIT_FAILURE;
     }
 
     close(socket_file_descriptor);
@@ -120,8 +128,8 @@ int http_gets::get_posix_way()
     std::regex pattern("[^ -~\n\r]");
     m_result = std::regex_replace(m_result,pattern,"");
     
-    fprintf(stderr, "debug: before returning.\n");
-    return (EXIT_SUCCESS);
+    std::cerr << "debug: before returning" << std::endl;
+    return EXIT_SUCCESS;
 }
 
 static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)

@@ -1,7 +1,7 @@
 #include <utility>
 #include <iostream>
 #include <fstream>
-
+#include <memory>
 #include "http_gets.h" 
 int main( int argc, char** argv )
 {

@@ -25,15 +25,15 @@ LFLAGS := -L./libs
 LDFLAGS := -shared
 
 # define any libraries to link into executable:
-#   if I want to link in libraries (libx.so or libx.a) I use the -llibname 
+#   if I want to link in libraries (libx.so or libx.a) I use the -llibname
 #   option, something like (this will link in libmylib.so and libm.so:
-LIBS := -lcurl -lm
+LIBS := -lcurl
 
 # define the C++ source files
 SRC_DIR := sources
 SRCS := $(SRC_DIR)/main.cpp $(SRC_DIR)/http_gets.cpp
 
-# define the C++ object files 
+# define the C++ object files
 #
 # This uses Suffix Replacement within a macro:
 #   $(name:string1=string2)
@@ -43,10 +43,11 @@ SRCS := $(SRC_DIR)/main.cpp $(SRC_DIR)/http_gets.cpp
 #
 OBJS := $(SRCS:.cpp=.o)
 
-# define the executable file 
-MAIN := mycc
+# define the executable file
+MAIN := http_gets
+
 #
-# The following part of the makefile is generic; it can be used to 
+# The following part of the makefile is generic; it can be used to
 # build any executable just by changing the definitions above and by
 # deleting dependencies appended to the file from 'make depend'
 #
@@ -54,14 +55,14 @@ MAIN := mycc
 .PHONY: depend clean clean_all
 
 all:    $(MAIN)
-	@echo  Simple compiler named mycc has been compiled 
+	@echo  Simple website downloader http_gets has been compiled
 
-$(MAIN): $(OBJS) 
+$(MAIN): $(OBJS)
 	$(CC) $(CFLAGS) $(INCLUDES) -o $(MAIN) $(OBJS) $(LFLAGS) $(LIBS)
 
 # this is a suffix replacement rule for building .o's from .cpp's
 # it uses automatic variables $<: the name of the prerequisite of
-# the rule(a .cpp file) and $@: the name of the target of the rule (a .o file) 
+# the rule(a .cpp file) and $@: the name of the target of the rule (a .o file)
 # (see the gnu make manual section about automatic variables)
 .cpp.o:
 	$(CC) $(CFLAGS) $(INCLUDES) -c $<  -o $@

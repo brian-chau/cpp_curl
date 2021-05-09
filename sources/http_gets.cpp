@@ -15,6 +15,7 @@
 #include <iostream>
 #include <iomanip>
 #include <stdio.h>
+#include <memory>
 
 http_gets::http_gets(std::string hostname, unsigned int port)
 {

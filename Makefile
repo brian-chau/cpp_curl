@@ -1,4 +1,4 @@
-# 'make depend'      uses makedepend to automatically generate dependencies 
+# 'make depend'      uses makedepend to automatically generate dependencies
 #                    (dependencies are added to end of Makefile)
 # 'make'             build executable file 'mycc'
 # 'make clean'       removes all .o files
@@ -30,8 +30,7 @@ LDFLAGS := -shared
 LIBS := -lcurl
 
 # define the C++ source files
-SRC_DIR := sources
-SRCS := $(SRC_DIR)/main.cpp $(SRC_DIR)/http_gets.cpp
+SRCS := $(wildcard sources/*.cpp)
 
 # define the C++ object files
 #
